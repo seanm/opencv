@@ -501,7 +501,6 @@ OCV_OPTION(CV_DISABLE_OPTIMIZATION    "Disable explicit optimized code (dispatch
 OCV_OPTION(CV_TRACE                   "Enable OpenCV code trace" ON)
 OCV_OPTION(OPENCV_GENERATE_SETUPVARS  "Generate setup_vars* scripts" ON IF (NOT ANDROID AND NOT APPLE_FRAMEWORK) )
 OCV_OPTION(ENABLE_CONFIG_VERIFICATION "Fail build if actual configuration doesn't match requested (WITH_XXX != HAVE_XXX)" OFF)
-OCV_OPTION(OPENCV_ENABLE_MEMALIGN     "Enable posix_memalign or memalign usage" ON)
 OCV_OPTION(OPENCV_DISABLE_FILESYSTEM_SUPPORT "Disable filesystem support" OFF)
 OCV_OPTION(OPENCV_DISABLE_THREAD_SUPPORT "Build the library without multi-threaded code." OFF)
 OCV_OPTION(OPENCV_DISABLE_ENV_SUPPORT "Disable environment variables access (getenv)" (CMAKE_SYSTEM_NAME MATCHES "Windows(CE|Phone|Store)"))
@@ -716,28 +715,11 @@ if(UNIX OR MINGW)
     list(REMOVE_ITEM OPENCV_LINKER_LIBS pthread)
   endif()
 
-  if(OPENCV_ENABLE_MEMALIGN)
-    CHECK_SYMBOL_EXISTS(posix_memalign stdlib.h HAVE_POSIX_MEMALIGN)
-    CHECK_INCLUDE_FILE(malloc.h HAVE_MALLOC_H)
-    if(HAVE_MALLOC_H)
-      CHECK_SYMBOL_EXISTS(memalign malloc.h HAVE_MEMALIGN)
-    endif()
-    # TODO:
-    # - std::aligned_alloc() C++17 / C11
-  endif()
-
   CHECK_SYMBOL_EXISTS(getauxval sys/auxv.h HAVE_GETAUXVAL)
   CHECK_SYMBOL_EXISTS(elf_aux_info sys/auxv.h HAVE_ELF_AUX_INFO)
 elseif(WIN32)
   include(CheckIncludeFile)
   include(CheckSymbolExists)
-
-  if(OPENCV_ENABLE_MEMALIGN)
-    CHECK_INCLUDE_FILE(malloc.h HAVE_MALLOC_H)
-    if(HAVE_MALLOC_H)
-      CHECK_SYMBOL_EXISTS(_aligned_malloc malloc.h HAVE_WIN32_ALIGNED_MALLOC)
-    endif()
-  endif()
 endif()
 
 if(DEFINED OPENCV_ALGO_HINT_DEFAULT)

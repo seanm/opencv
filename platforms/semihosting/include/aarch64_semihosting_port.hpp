@@ -25,18 +25,4 @@ inline double copysign(double mag, double sgn) {
 } //namespace std
 #endif // __cplusplus == 201103L
 
-extern "C" {
-// Redirect the implementation of `posix_memalign` to `memalign`
-// as the former is
-// missing at link time. https://pubs.opengroup.org/onlinepubs/9699919799/functions/posix_memalign.html
-__attribute__((weak)) int posix_memalign(void **memptr, size_t alignment, size_t size) {
-    void * ptr =  memalign(alignment, size);
-    if (ptr != NULL) {
-        *memptr = ptr;
-        return 0;
-    }
-    return ENOMEM;
-}
-} // extern "C"
-
 #endif
